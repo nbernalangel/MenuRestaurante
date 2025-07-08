@@ -1,0 +1,205 @@
+/* --- ESTILOS GENERALES Y FUENTES --- */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+
+:root {
+    --color-azul-oscuro: #002b4d;
+    --color-verde-lima: #89d341;
+    --color-fondo: #f4f7f6;
+    --color-superficie: #ffffff;
+    --color-texto-principal: #212529;
+    --color-texto-secundario: #6c757d;
+    --color-borde: #e9ecef;
+    --color-peligro: #e74c3c;
+    --color-exito: #28a745;
+    --radio-borde: 8px;
+    --sombra-suave: 0 8px 24px rgba(0,0,0,0.06);
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: var(--color-fondo);
+    color: var(--color-texto-principal);
+    margin: 0;
+    padding: 1.5em;
+    font-size: 15px;
+}
+
+.container {
+    max-width: 850px;
+    margin: auto;
+    background: var(--color-superficie);
+    padding: 1.5em 2em;
+    border-radius: var(--radio-borde);
+    box-shadow: var(--sombra-suave);
+}
+
+/* --- ENCABEZADOS Y SEPARADORES --- */
+h1, h2, h3 {
+    font-family: 'Poppins', sans-serif;
+    color: var(--color-azul-oscuro);
+}
+h1 { font-size: 1.4em; margin: 0; }
+h2 { font-size: 1.2em; border-bottom: 2px solid var(--color-verde-lima); padding-bottom: 8px; margin-top: 25px; margin-bottom: 20px; }
+h3 { font-size: 1em; margin-top: 25px; color: var(--color-texto); }
+hr { border: none; border-top: 1px solid var(--color-borde); margin: 30px 0; }
+.admin-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 15px; margin-bottom: 15px; }
+
+/* --- FORMULARIOS --- */
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+}
+label {
+    font-weight: 600;
+    font-size: 0.9em;
+}
+input[type="text"], input[type="email"], input[type="password"], input[type="number"], input[type="date"], textarea, select {
+    width: 100%; padding: 10px; border: 1px solid var(--color-borde); border-radius: var(--radio-borde); font-size: 1em; box-sizing: border-box;
+}
+input:focus, textarea:focus {
+    outline: none;
+    border-color: var(--color-verde-lima);
+    box-shadow: 0 0 0 3px rgba(137, 211, 65, 0.2);
+}
+.opcion-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* --- BOTONES --- */
+.btn {
+    display: inline-block;
+    padding: 12px 30px;
+    border: none;
+    border-radius: var(--radio-borde);
+    cursor: pointer;
+    font-size: 1em;
+    font-weight: 600;
+    text-decoration: none;
+    text-align: center;
+    transition: all 0.2s ease-in-out;
+    width: auto; /* Ancho automático */
+}
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+}
+
+/* Botones dentro de un formulario se alinean a la derecha */
+form .btn {
+    align-self: flex-end;
+}
+
+.btn-primary {
+    background-color: var(--color-verde-lima);
+    color: var(--color-azul-oscuro);
+}
+.btn-primary:hover {
+    background-color: var(--color-azul-oscuro);
+    color: white;
+}
+.btn-danger {
+    background-color: var(--color-peligro);
+    color: white;
+}
+
+/* --- TABLAS --- */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1.5em;
+    font-size: 0.95em;
+}
+th, td {
+    padding: 10px;
+    text-align: left;
+    border-bottom: 1px solid var(--color-borde);
+    vertical-align: middle;
+}
+thead th {
+    background-color: var(--color-azul-oscuro);
+    color: white;
+    font-weight: 500;
+}
+td button {
+    width: auto;
+    padding: 6px 10px;
+    margin-right: 5px;
+    font-size: 12px;
+}
+
+/* --- TABLAS RESPONSIVAS --- */
+.table-responsive {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+.table-responsive table {
+    min-width: 600px;
+}
+
+/* --- Switch de Disponibilidad --- */
+.switch { position: relative; display: inline-block; width: 50px; height: 24px; }
+.switch input { opacity: 0; width: 0; height: 0; }
+.slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 24px; }
+.slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; }
+input:checked + .slider { background-color: var(--color-verde-lima); }
+input:checked + .slider:before { transform: translateX(26px); }
+
+/* --- PÁGINA DEL CLIENTE (index.html) --- */
+.public-menu-header h1 {
+    font-size: 2.5em;
+    text-align: center;
+    color: var(--color-azul-oscuro);
+    margin-bottom: 1em;
+}
+.public-menu-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2em;
+}
+.menu-item {
+    background: var(--color-superficie);
+    border-radius: var(--radio-borde);
+    padding: 1.5em;
+    box-shadow: var(--sombra-suave);
+    margin-bottom: 1em;
+}
+.menu-item h4 { margin: 0 0 5px 0; }
+.menu-item .price { font-weight: 600; color: var(--color-azul-oscuro); }
+#cart-section {
+    background-color: var(--color-superficie);
+    padding: 20px;
+    border-radius: var(--radio-borde);
+    box-shadow: var(--sombra-suave);
+    position: sticky;
+    top: 20px;
+}
+#cart-section h2 {
+    border-color: var(--color-verde-lima);
+}
+.cart-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    font-size: 0.9em;
+}
+.cart-item button {
+    background: var(--color-peligro);
+    color: white;
+    padding: 2px 8px;
+    font-size: 12px;
+    border-radius: 4px;
+    border: none;
+    cursor: pointer;
+}
+
+/* --- DISEÑO RESPONSIVO --- */
+@media (min-width: 1024px) {
+    .public-menu-grid {
+        grid-template-columns: 2fr 1fr;
+    }
+}

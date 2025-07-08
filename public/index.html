@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menú Digital</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <div class="container public-menu-container">
+        <header class="public-menu-header">
+            <h1 id="nombre-restaurante">Cargando...</h1>
+        </header>
+
+        <div class="public-menu-grid">
+            <main>
+                <section id="menu-del-dia-section" class="menu-section">
+                    <h2>Menú del Día</h2>
+                    <div id="menu-del-dia-content"></div>
+                </section>
+                
+                <section id="especiales-section" class="menu-section">
+                    <h2>Especiales de la Casa</h2>
+                    <div id="especiales-content"></div>
+                </section>
+                
+                <section id="platos-a-la-carta-section" class="menu-section">
+                    <h2>Platos a la Carta</h2>
+                    <div id="platos-a-la-carta-content"></div>
+                </section>
+            </main>
+            
+            <aside id="cart-section">
+                <h2>Tu Pedido</h2>
+                <div id="cart-items"><p>Tu carrito está vacío.</p></div>
+                <div class="cart-summary">
+                    <strong>Total: $<span id="cart-total-price">0.00</span></strong>
+                </div>
+                <div class="customer-info">
+                    <label for="nombre-cliente">Tu Nombre</label>
+                    <input type="text" id="nombre-cliente" placeholder="Nombre (requerido)">
+                    
+                    <label for="telefono-cliente">Tu Teléfono</label>
+                    <input type="tel" id="telefono-cliente" placeholder="Teléfono de contacto">
+
+                    <label for="direccion-cliente">Dirección</label>
+                    <input type="text" id="direccion-cliente" placeholder="Dirección para domicilio (opcional)">
+                    
+                    <label for="notas-cliente">Notas Adicionales</label>
+                    <textarea id="notas-cliente" placeholder="Alergias, sin cebolla, etc." rows="2"></textarea>
+                </div>
+                <button id="checkout-btn" class="btn btn-primary">Pedir por WhatsApp</button>
+            </aside>
+        </div>
+    </div>
+    <script src="/js/script.js?v=34"></script>
+</body>
+</html>

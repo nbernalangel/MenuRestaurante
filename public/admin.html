@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administración Completa del Menú</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="container">
+        <header class="admin-header">
+            <h1 id="admin-restaurante-nombre">Cargando...</h1>
+            <button id="logout-btn" class="btn btn-danger">Cerrar Sesión</button>
+        </header>
+
+        <section>
+            <h2>Datos de mi Restaurante</h2>
+            <form id="edit-restaurante-form">
+                <label for="edit-restaurante-nombre">Nombre del Restaurante</label>
+                <input type="text" id="edit-restaurante-nombre" required>
+                <label for="edit-restaurante-telefono">Teléfono (para WhatsApp)</label>
+                <input type="text" id="edit-restaurante-telefono" required>
+                <button type="submit" class="btn btn-primary">Actualizar Datos</button>
+            </form>
+        </section>
+        
+        <hr>
+
+        <section>
+            <h2>Gestionar Platos a la Carta</h2>
+            <form id="plato-form">
+                <input type="hidden" id="plato-id">
+                <label for="plato-nombre">Nombre del Plato</label>
+                <input type="text" id="plato-nombre" required>
+                <label for="plato-descripcion">Descripción</label>
+                <textarea id="plato-descripcion" rows="2"></textarea>
+                <label for="plato-precio">Precio</label>
+                <input type="number" id="plato-precio" step="0.01" required>
+                <label for="plato-categoria">Categoría (Ej: Fuertes, Entradas)</label>
+                <input type="text" id="plato-categoria" required>
+                <button type="submit" class="btn btn-primary">Guardar Plato</button>
+            </form>
+            <h3>Platos Existentes</h3>
+            <div class="table-responsive">
+                <table id="platos-table">
+                    <thead><tr><th>Nombre</th><th>Precio</th><th>Categoría</th><th>Disponible</th><th>Acciones</th></tr></thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </section>
+
+        <hr>
+
+        <section>
+            <h2>Gestionar Especiales</h2>
+            <form id="especial-form">
+                <input type="hidden" id="especial-id">
+                <label for="especial-nombre">Nombre del Especial</label>
+                <input type="text" id="especial-nombre" required>
+                <label for="especial-descripcion">Descripción</label>
+                <textarea id="especial-descripcion" rows="2"></textarea>
+                <label for="especial-precio">Precio</label>
+                <input type="number" id="especial-precio" step="0.01" required>
+                <button type="submit" class="btn btn-primary">Guardar Especial</button>
+            </form>
+            <h3>Especiales Existentes</h3>
+            <div class="table-responsive">
+                <table id="especiales-table">
+                    <thead><tr><th>Nombre</th><th>Precio</th><th>Disponible</th><th>Acciones</th></tr></thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </section>
+
+        <hr>
+
+        <section>
+            <h2>Gestionar Categorías para Menú del Día</h2>
+            <form id="categoria-form">
+                <input type="hidden" id="categoria-id">
+                <label for="categoria-nombre">Nombre de Categoría (Ej: Proteínas)</label>
+                <input type="text" id="categoria-nombre" required>
+                <div id="opciones-container"><label>Opciones para la categoría</label></div>
+                <button type="button" id="add-opcion-btn" class="btn" style="background-color: #5a6268; margin-top:1em; margin-bottom:1em;">+ Añadir opción</button>
+                <button type="submit" class="btn btn-primary">Guardar Categoría</button>
+            </form>
+            <h3>Categorías Existentes</h3>
+            <div class="table-responsive">
+                <table id="categorias-table">
+                    <thead><tr><th>Nombre</th><th>Opciones</th><th>Acciones</th></tr></thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </section>
+        
+        <hr>
+        
+        <section>
+             <h2>Gestionar Menús del Día</h2>
+            <form id="menu-dia-form">
+                <input type="hidden" id="menu-dia-id">
+                <div><label for="menu-fecha">Fecha</label><input type="date" id="menu-fecha" required></div>
+                <div><label for="menu-nombre">Nombre</label><input type="text" id="menu-nombre" value="Menú del Día"></div>
+                <div><label for="menu-precio">Precio</label><input type="number" id="menu-precio" value="0" step="0.01"></div>
+                <h3>Selección de Platos para el Menú</h3>
+                <div id="menu-items-selection-container"><p>Cargando categorías...</p></div>
+                <button type="submit" class="btn btn-primary">Guardar Menú del Día</button>
+            </form>
+            <h3>Menús del Día Existentes</h3>
+            <div class="table-responsive">
+                <table id="menus-dia-table">
+                    <thead><tr><th>Fecha</th><th>Nombre</th><th>Platos</th><th>Acciones</th></tr></thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </section>
+    </div>
+
+    <script src="js/admin.js?v=31"></script>
+</body>
+</html>

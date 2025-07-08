@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro de Restaurante</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Registra tu Restaurante</h1>
+        <form id="register-form">
+            <h2>Paso 1: Datos del Restaurante</h2>
+            <label for="restaurante-nombre">Nombre de tu Restaurante</label>
+            <input type="text" id="restaurante-nombre" required>
+            
+            <label for="restaurante-slug">URL Única (se genera automáticamente)</label>
+            <input type="text" id="restaurante-slug" required>
+            
+            <label for="restaurante-telefono">Teléfono para Pedidos (WhatsApp)</label>
+            <input type="text" id="restaurante-telefono" required>
+
+            <hr>
+
+            <h2>Paso 2: Tus Datos de Administrador</h2>
+            <label for="usuario-email">Tu Email</label>
+            <input type="email" id="usuario-email" required>
+
+            <label for="usuario-password">Crea una Contraseña</label>
+            <input type="password" id="usuario-password" required>
+
+            <button type="submit" class="btn btn-primary">Crear mi Cuenta y Restaurante</button>
+        </form>
+    </div>
+    <script src="js/register.js"></script>
+</body>
+</html>
