@@ -23,7 +23,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             console.error("Error: Se intentó añadir un ítem sin precio válido.", item);
             return;
         }
-
         const existingItem = cart.find(cartItem => cartItem.id === item.id);
         if (existingItem) {
             existingItem.quantity++;
@@ -44,7 +43,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
         renderCart();
     }
-
+    
     function renderCart() {
         cartItemsContainer.innerHTML = '';
         if (cart.length === 0) {
@@ -57,55 +56,77 @@ document.addEventListener('DOMContentLoaded', async () => {
             total += item.precio * item.quantity;
             const itemDiv = document.createElement('div');
             itemDiv.className = 'cart-item';
-            itemDiv.innerHTML = `<span class="item-name">${item.quantity}x ${item.nombre}</span><span class="item-price">$${(item.precio * item.quantity).toFixed(2)}</span><button class="remove-from-cart-btn" data-id="${item.id}">-</button>`;
+            itemDiv.innerHTML = `
+                <div class="cart-item-details">
+                    <span class="item-name">${item.quantity}x ${item.nombre}</span>
+                    <span class="item-price">$${(item.precio * item.quantity).toFixed(2)}</span>
+                </div>
+                <button class="remove-btn" data-id="${item.id}">×</button>
+            `;
             cartItemsContainer.appendChild(itemDiv);
         });
         cartTotalPriceDisplay.textContent = total.toFixed(2);
     }
     
     cartItemsContainer.addEventListener('click', (e) => {
-        if (e.target.classList.contains('remove-from-cart-btn')) {
-            removeFromCart(e.target.dataset.id);
+        const removeButton = e.target.closest('.remove-btn');
+        if (removeButton) {
+            removeFromCart(removeButton.dataset.id);
         }
     });
 
-    // 4. RENDERIZADO DE MENÚS
+    // 4. RENDERIZADO DE MENÚS (Con el nuevo diseño de tarjetas)
     function renderMenuDelDia(menu) {
         if (!menu) {
-            menuDelDiaContent.innerHTML = '<div class="menu-item"><p>No hay menú del día disponible hoy.</p></div>';
+            menuDelDiaContent.parentElement.style.display = 'none';
             return;
         }
-        let menuHtml = `<div class="menu-item"><h4>${menu.nombreMenu} - $${menu.precioMenuGlobal.toFixed(2)}</h4>`;
+        menuDelDiaContent.parentElement.style.display = 'block';
+
+        let opcionesHtml = '';
         menu.itemsPorCategoria.forEach((cat, index) => {
-            menuHtml += `<div><strong>${cat.categoriaNombre}:</strong></div>`;
+            opcionesHtml += `<div><strong>${cat.categoriaNombre}:</strong></div>`;
             const opciones = cat.platosEscogidos;
             if (opciones.length > 1) {
                 opciones.forEach((plato, i) => {
-                    menuHtml += `<label style="font-weight:normal; display:inline-block; margin-right:15px;"><input type="radio" name="menu-cat-${index}" value="${plato.nombre}" ${i === 0 ? 'checked' : ''}> ${plato.nombre}</label>`;
+                    opcionesHtml += `<label style="font-weight:normal; display:inline-block; margin-right:15px;"><input type="radio" name="menu-cat-${index}" value="${plato.nombre}" ${i === 0 ? 'checked' : ''}> ${plato.nombre}</label>`;
                 });
             } else if (opciones.length === 1) {
-                menuHtml += `<span data-opcion-unica="true" data-nombre="${opciones[0].nombre}">${opciones[0].nombre}</span>`;
+                opcionesHtml += `<span data-opcion-unica="true" data-nombre="${opciones[0].nombre}">${opciones[0].nombre}</span>`;
             }
         });
-        menuHtml += `<button class="add-menu-to-cart-btn btn btn-primary" style="margin-top:1em;" data-precio="${menu.precioMenuGlobal}" data-nombre-base="${menu.nombreMenu}">Añadir Menú</button></div>`;
-        menuDelDiaContent.innerHTML = menuHtml;
+
+        menuDelDiaContent.innerHTML = `
+            <div class="menu-card">
+                <div>
+                    <h3>${menu.nombreMenu}</h3>
+                    <div class="description">${opcionesHtml}</div>
+                </div>
+                <div class="card-footer">
+                    <span class="price">$${menu.precioMenuGlobal.toFixed(2)}</span>
+                    <button class="add-btn add-menu-to-cart-btn" data-precio="${menu.precioMenuGlobal}" data-nombre-base="${menu.nombreMenu}">Añadir Menú</button>
+                </div>
+            </div>`;
     }
     
     function renderPlatos(platos, container, tipoPlato) {
         if (!platos || platos.length === 0) {
-            container.innerHTML = `<div class="menu-item"><p>No hay ${tipoPlato} disponibles.</p></div>`;
+            container.parentElement.style.display = 'none';
             return;
         }
+        container.parentElement.style.display = 'block';
         container.innerHTML = '';
         platos.forEach(plato => {
             const platoDiv = document.createElement('div');
-            platoDiv.className = 'menu-item';
+            platoDiv.className = 'menu-card';
             platoDiv.innerHTML = `
-                <h4>${plato.nombre}</h4>
-                <p>${plato.descripcion || ''}</p>
-                <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <h3>${plato.nombre}</h3>
+                    <p class="description">${plato.descripcion || ''}</p>
+                </div>
+                <div class="card-footer">
                     <span class="price">$${plato.precio.toFixed(2)}</span>
-                    <button class="add-plato-to-cart-btn btn btn-primary" data-id="${plato._id}" data-nombre="${plato.nombre}" data-precio="${plato.precio}">Añadir</button>
+                    <button class="add-btn add-plato-to-cart-btn" data-id="${plato._id}" data-nombre="${plato.nombre}" data-precio="${plato.precio}">Añadir</button>
                 </div>
             `;
             container.appendChild(platoDiv);
@@ -123,16 +144,11 @@ document.addEventListener('DOMContentLoaded', async () => {
             
             let selecciones = [];
             const radioGroups = menuDelDiaContent.querySelectorAll('input[type="radio"]');
-            if (radioGroups.length > 0) {
-                const groups = {};
-                radioGroups.forEach(radio => {
-                    if (!groups[radio.name]) groups[radio.name] = false;
-                    if (radio.checked) {
-                        selecciones.push(radio.value);
-                        groups[radio.name] = true;
-                    }
-                });
-            }
+            radioGroups.forEach(radio => {
+                if (radio.checked) {
+                    selecciones.push(radio.value);
+                }
+            });
             
             menuDelDiaContent.querySelectorAll('[data-opcion-unica]').forEach(opcion => {
                 selecciones.push(opcion.dataset.nombre);
@@ -173,10 +189,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         window.open(whatsappUrl, '_blank');
     });
 
-    // 7. CARGA INICIAL
+    // 7. CARGA INICIAL (CORREGIDO PARA USAR EL SLUG ORIGINAL)
     async function loadPage() {
         const pathParts = window.location.pathname.split('/');
-        const slug = pathParts.pop() || pathParts.pop();
+        const slug = pathParts.pop() || pathParts.pop(); 
+
         if (!slug || window.location.pathname.indexOf('/r/') === -1) {
             document.body.innerHTML = `<div class="container"><h1>Error: URL de restaurante inválida.</h1><p>Asegúrate de que la URL sea del tipo /r/nombre-del-restaurante</p></div>`;
             return;

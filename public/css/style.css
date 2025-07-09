@@ -148,54 +148,152 @@ td button {
 input:checked + .slider { background-color: var(--color-verde-lima); }
 input:checked + .slider:before { transform: translateX(26px); }
 
+
 /* --- PÁGINA DEL CLIENTE (index.html) --- */
+/* Esta es la nueva sección mejorada */
+
 .public-menu-header h1 {
     font-size: 2.5em;
     text-align: center;
     color: var(--color-azul-oscuro);
     margin-bottom: 1em;
 }
+
 .public-menu-grid {
     display: grid;
     grid-template-columns: 1fr;
     gap: 2em;
 }
-.menu-item {
-    background: var(--color-superficie);
-    border-radius: var(--radio-borde);
-    padding: 1.5em;
-    box-shadow: var(--sombra-suave);
-    margin-bottom: 1em;
+
+/* Títulos de sección como "Menú del día", "Especiales", etc. */
+.menu-section h2 {
+    font-size: 2em;
+    color: var(--color-azul-oscuro);
+    border-bottom: 3px solid var(--color-verde-lima);
+    padding-bottom: 10px;
+    margin-bottom: 25px;
 }
-.menu-item h4 { margin: 0 0 5px 0; }
-.menu-item .price { font-weight: 600; color: var(--color-azul-oscuro); }
+
+/* LA NUEVA TARJETA DE MENÚ (Reemplaza a tu .menu-item) */
+.menu-card {
+    background-color: var(--color-superficie);
+    border-radius: var(--radio-borde);
+    padding: 25px;
+    margin-bottom: 20px;
+    box-shadow: var(--sombra-suave);
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 230px; /* Le damos una altura mínima para consistencia */
+}
+
+/* Efecto al pasar el mouse sobre la tarjeta */
+.menu-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 28px rgba(0,0,0,0.1);
+}
+
+/* Nombre del plato dentro de la tarjeta */
+.menu-card h3 {
+    font-size: 1.5em;
+    color: var(--color-azul-oscuro);
+    margin-top: 0;
+    margin-bottom: 10px;
+}
+
+/* Descripción o acompañamientos del plato */
+.menu-card .description {
+    color: var(--color-texto-secundario);
+    font-size: 1em;
+    line-height: 1.5;
+    flex-grow: 1; /* Esto hace que la descripción ocupe el espacio flexible */
+}
+
+/* Contenedor para el precio y el botón */
+.menu-card .card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 20px;
+}
+
+/* Precio del plato */
+.menu-card .price {
+    font-size: 1.7em;
+    font-weight: 700;
+    color: var(--color-azul-oscuro);
+}
+
+/* El nuevo botón de "Añadir" */
+.menu-card .add-btn {
+    background-color: var(--color-verde-lima);
+    color: var(--color-azul-oscuro);
+    font-weight: 700;
+    border: none;
+    padding: 12px 25px;
+    border-radius: var(--radio-borde);
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+}
+
+.menu-card .add-btn:hover {
+    background-color: var(--color-azul-oscuro);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+}
+
+
+/* SECCIÓN DEL CARRITO DE COMPRAS */
 #cart-section {
     background-color: var(--color-superficie);
-    padding: 20px;
+    padding: 25px;
     border-radius: var(--radio-borde);
     box-shadow: var(--sombra-suave);
     position: sticky;
-    top: 20px;
+    top: 24px; /* Un poco más de espacio arriba */
 }
+
 #cart-section h2 {
     border-color: var(--color-verde-lima);
 }
+
 .cart-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 10px 0;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--color-borde);
+    font-size: 0.95em;
+}
+
+.cart-item:last-child {
+    border-bottom: none;
+}
+
+.cart-item-details {
+    flex-grow: 1;
+}
+
+.cart-item-details .item-name {
+    font-weight: 600;
+}
+
+.cart-item-details .item-price {
     font-size: 0.9em;
+    color: var(--color-texto-secundario);
 }
-.cart-item button {
-    background: var(--color-peligro);
-    color: white;
-    padding: 2px 8px;
-    font-size: 12px;
-    border-radius: 4px;
+
+.cart-item .remove-btn {
+    background: transparent;
     border: none;
+    color: var(--color-peligro);
+    font-size: 1.2em;
     cursor: pointer;
+    padding: 5px;
 }
+
 
 /* --- DISEÑO RESPONSIVO --- */
 @media (min-width: 1024px) {

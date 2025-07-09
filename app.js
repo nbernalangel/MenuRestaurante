@@ -3,6 +3,8 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const path = require('path');
 const bcrypt = require('bcrypt');
+const { Resend } = require('resend'); // USAMOS LA LIBRERÍA OFICIAL DE RESEND
+require('dotenv').config(); 
 
 const app = express();
 const port = 3000;
@@ -24,45 +26,80 @@ const MenuDia = require('./models/MenuDia');
 const Restaurante = require('./models/Restaurante');
 const Usuario = require('./models/Usuario');
 
-// ========================================================
-// === RUTA DE REGISTRO PÚBLICO ===========================
-// ========================================================
-app.post('/api/public-register', async (req, res) => {
-    try {
-        const { restaurante, usuario } = req.body;
+// --- Configuración de Resend ---
+const resend = new Resend(process.env.RESEND_API_KEY);
 
-        // Validar que el slug o el nombre no existan
-        const restauranteExistente = await Restaurante.findOne({ $or: [{ slug: restaurante.slug }, { nombre: restaurante.nombre }] });
-        if (restauranteExistente) {
-            return res.status(409).json({ message: 'El nombre o la URL del restaurante ya existe.' });
+
+// ========================================================
+// === RUTAS DE REGISTRO Y VERIFICACIÓN ===================
+// ========================================================
+app.post('/api/register', async (req, res) => {
+    try {
+        const { nombreRestaurante, email, password } = req.body;
+
+        const usuarioExistente = await Usuario.findOne({ email });
+        if (usuarioExistente) {
+            return res.status(409).json({ message: 'Este correo electrónico ya está registrado.' });
         }
         
-        // Validar que el email no exista
-        const usuarioExistente = await Usuario.findOne({ email: usuario.email });
-        if (usuarioExistente) {
-            return res.status(409).json({ message: 'Este email ya está registrado.' });
+        const slug = nombreRestaurante.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9\-]/g, '');
+        const restauranteExistente = await Restaurante.findOne({ slug });
+        if (restauranteExistente) {
+            return res.status(409).json({ message: 'El nombre de este restaurante ya genera una URL que existe. Por favor, elige otro.' });
         }
 
-        // 1. Crear el restaurante
-        const nuevoRestaurante = new Restaurante(restaurante);
+        const nuevoRestaurante = new Restaurante({ nombre: nombreRestaurante, slug: slug });
         await nuevoRestaurante.save();
 
-        // 2. Encriptar contraseña y crear el usuario administrador
         const salt = await bcrypt.genSalt(10);
-        const hashedPassword = await bcrypt.hash(usuario.password, salt);
+        const hashedPassword = await bcrypt.hash(password, salt);
         
+        const verificationCode = Math.floor(100000 + Math.random() * 900000).toString();
+        const verificationCodeExpires = new Date(Date.now() + 15 * 60 * 1000); 
+
         const nuevoUsuario = new Usuario({
-            email: usuario.email,
+            email,
             password: hashedPassword,
             rol: 'admin_restaurante',
-            restaurante: nuevoRestaurante._id // Asignar el ID del restaurante recién creado
+            restaurante: nuevoRestaurante._id,
+            verificationCode,
+            verificationCodeExpires
         });
         await nuevoUsuario.save();
 
-        res.status(201).json({ message: 'Restaurante y usuario creados con éxito.' });
+        // Enviar el correo de verificación usando Resend
+        await resend.emails.send({
+            from: 'Menú Digital <onboarding@resend.dev>', // Resend usa este 'from' por defecto
+            to: email,
+            subject: 'Tu Código de Verificación',
+            html: `<div style="font-family: Arial, sans-serif; text-align: center; padding: 20px;"><h2>¡Bienvenido a Menú Digital!</h2><p>Gracias por registrarte. Tu código de verificación es:</p><p style="font-size: 24px; font-weight: bold; letter-spacing: 5px; background-color: #f0f0f0; padding: 10px; border-radius: 8px;">${verificationCode}</p><p>Este código expirará en 15 minutos.</p></div>`
+        });
+
+        res.status(201).json({ message: '¡Registro exitoso! Revisa tu correo para obtener el código de verificación.' });
 
     } catch (e) {
-        res.status(500).json({ message: e.message });
+        console.error("Error en /api/register:", e);
+        res.status(500).json({ message: 'Ocurrió un error en el servidor.' });
+    }
+});
+
+app.post('/api/verify', async (req, res) => {
+    try {
+        const { email, verificationCode } = req.body;
+        const usuario = await Usuario.findOne({ email });
+        if (!usuario) { return res.status(404).json({ message: 'Usuario no encontrado.' }); }
+        if (usuario.isVerified) { return res.status(400).json({ message: 'Esta cuenta ya ha sido verificada.' }); }
+        if (usuario.verificationCode !== verificationCode || usuario.verificationCodeExpires < new Date()) {
+            return res.status(400).json({ message: 'Código de verificación inválido o expirado.' });
+        }
+        usuario.isVerified = true;
+        usuario.verificationCode = undefined;
+        usuario.verificationCodeExpires = undefined;
+        await usuario.save();
+        res.status(200).json({ message: '¡Cuenta verificada con éxito! Ya puedes iniciar sesión.' });
+    } catch (e) {
+        console.error("Error en /api/verify:", e);
+        res.status(500).json({ message: 'Ocurrió un error en el servidor.' });
     }
 });
 
@@ -77,7 +114,8 @@ app.put('/api/restaurantes/:id', async (req, res) => { try { const item = await 
 
 app.post('/api/usuarios', async (req, res) => { try { const { email, password, rol, restaurante } = req.body; const salt = await bcrypt.genSalt(10); const hashedPassword = await bcrypt.hash(password, salt); const item = new Usuario({ email, password: hashedPassword, rol, restaurante }); await item.save(); res.status(201).json(item); } catch (e) { res.status(400).json({ message: e.message }); }});
 app.get('/api/usuarios', async (req, res) => { try { const items = await Usuario.find().populate('restaurante', 'nombre'); res.json(items); } catch (e) { res.status(500).json({ message: e.message }); } });
-app.post('/api/login', async (req, res) => { try { const { email, password } = req.body; const usuario = await Usuario.findOne({ email }); if (!usuario) { return res.status(401).json({ message: 'Credenciales incorrectas' }); } const esValida = await bcrypt.compare(password, usuario.password); if (!esValida) { return res.status(401).json({ message: 'Credenciales incorrectas' }); } let nombreRestaurante = null; if(usuario.restaurante) { const rest = await Restaurante.findById(usuario.restaurante); nombreRestaurante = rest ? rest.nombre : null; } res.json({ userId: usuario._id, email: usuario.email, rol: usuario.rol, restauranteId: usuario.restaurante, nombreRestaurante }); } catch (e) { res.status(500).json({ message: 'Error interno del servidor' }); }});
+
+app.post('/api/login', async (req, res) => { try { const { email, password } = req.body; const usuario = await Usuario.findOne({ email }); if (!usuario) { return res.status(401).json({ message: 'Credenciales incorrectas' }); } if(!usuario.isVerified) { return res.status(401).json({ message: 'Tu cuenta no ha sido verificada. Por favor, revisa tu correo.'}); } const esValida = await bcrypt.compare(password, usuario.password); if (!esValida) { return res.status(401).json({ message: 'Credenciales incorrectas' }); } let nombreRestaurante = null; if(usuario.restaurante) { const rest = await Restaurante.findById(usuario.restaurante); nombreRestaurante = rest ? rest.nombre : null; } res.json({ userId: usuario._id, email: usuario.email, rol: usuario.rol, restauranteId: usuario.restaurante, nombreRestaurante }); } catch (e) { res.status(500).json({ message: 'Error interno del servidor' }); }});
 
 
 // ========================================================
@@ -128,9 +166,9 @@ app.get('/api/public/menu/:slug', async (req, res) => {
     }
 });
 
-// Rutas para servir archivos HTML
 app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'public', 'landing.html')));
 app.get('/register', (req, res) => res.sendFile(path.join(__dirname, 'public', 'register.html')));
+app.get('/verify', (req, res) => res.sendFile(path.join(__dirname, 'public', 'verify.html')));
 app.get('/login', (req, res) => res.sendFile(path.join(__dirname, 'public', 'login.html')));
 app.get('/super_admin', (req, res) => res.sendFile(path.join(__dirname, 'public', 'super_admin.html')));
 app.get('/admin', (req, res) => res.sendFile(path.join(__dirname, 'public', 'admin.html')));

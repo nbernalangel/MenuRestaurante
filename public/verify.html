@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verificar Cuenta - Menú Digital</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <div class="container" style="max-width: 500px; margin-top: 3em;">
+        <header style="text-align: center; margin-bottom: 2em;">
+            <h1>Verifica tu Cuenta</h1>
+            <p id="verification-message" style="color: var(--color-texto-secundario);">
+                Hemos enviado un código de 6 dígitos a tu correo.
+            </p>
+        </header>
+
+        <form id="verify-form">
+            <div class="form-group">
+                <label for="verification-code">Código de Verificación</label>
+                <input type="text" id="verification-code" name="verificationCode" required maxlength="6" style="text-align: center; font-size: 1.5em; letter-spacing: 10px;">
+            </div>
+            
+            <div id="message-container" style="display: none; padding: 1em; text-align: center; border-radius: var(--radio-borde);"></div>
+
+            <button type="submit" class="btn btn-primary" style="width: 100%;">Verificar y Activar Cuenta</button>
+        </form>
+    </div>
+
+    <script src="/js/verify.js"></script>
+</body>
+</html>

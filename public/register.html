@@ -3,35 +3,49 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registro de Restaurante</title>
-    <link rel="stylesheet" href="css/style.css">
+    <title>Crear Nueva Cuenta - Menú Digital</title>
+    <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
-    <div class="container">
-        <h1>Registra tu Restaurante</h1>
-        <form id="register-form">
-            <h2>Paso 1: Datos del Restaurante</h2>
-            <label for="restaurante-nombre">Nombre de tu Restaurante</label>
-            <input type="text" id="restaurante-nombre" required>
-            
-            <label for="restaurante-slug">URL Única (se genera automáticamente)</label>
-            <input type="text" id="restaurante-slug" required>
-            
-            <label for="restaurante-telefono">Teléfono para Pedidos (WhatsApp)</label>
-            <input type="text" id="restaurante-telefono" required>
+    <div class="container" style="max-width: 500px; margin-top: 3em;">
+        <header style="text-align: center; margin-bottom: 2em;">
+            <h1>Crea tu Restaurante</h1>
+            <p style="color: var(--color-texto-secundario);">Regístrate para empezar a gestionar tu menú digital.</p>
+        </header>
 
+        <form id="register-form">
+            <div class="form-group">
+                <label for="nombre-completo">Tu Nombre Completo</label>
+                <input type="text" id="nombre-completo" name="nombreCompleto" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="nombre-restaurante">Nombre de tu Restaurante</label>
+                <input type="text" id="nombre-restaurante" name="nombreRestaurante" required>
+            </div>
+            
             <hr>
 
-            <h2>Paso 2: Tus Datos de Administrador</h2>
-            <label for="usuario-email">Tu Email</label>
-            <input type="email" id="usuario-email" required>
+            <div class="form-group">
+                <label for="email">Correo Electrónico (será tu usuario)</label>
+                <input type="email" id="email" name="email" required>
+            </div>
 
-            <label for="usuario-password">Crea una Contraseña</label>
-            <input type="password" id="usuario-password" required>
+            <div class="form-group">
+                <label for="password">Contraseña</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            
+            <div id="message-container" style="display: none; padding: 1em; text-align: center; border-radius: var(--radio-borde);"></div>
 
-            <button type="submit" class="btn btn-primary">Crear mi Cuenta y Restaurante</button>
+            <button type="submit" class="btn btn-primary" style="width: 100%;">Crear Cuenta</button>
         </form>
+        
+        <div style="text-align: center; margin-top: 1.5em;">
+            <p>¿Ya tienes una cuenta? <a href="/login.html" style="color: var(--color-verde-lima); font-weight: 600;">Inicia Sesión</a></p>
+        </div>
     </div>
-    <script src="js/register.js"></script>
+
+    <script src="/js/register.js"></script>
 </body>
 </html>
