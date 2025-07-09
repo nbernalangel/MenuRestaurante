@@ -3,20 +3,28 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const path = require('path');
 const bcrypt = require('bcrypt');
-const { Resend } = require('resend'); // USAMOS LA LIBRERÍA OFICIAL DE RESEND
+const { Resend } = require('resend'); 
 require('dotenv').config(); 
 
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000;
 
 // --- Middlewares ---
 app.use(cors());
 app.use(express.json());
 app.use(express.static('public'));
 
-// --- Conexión a MongoDB ---
-const dbUri = 'mongodb://127.0.0.1:27017/menu-restaurante-db';
-mongoose.connect(dbUri).then(() => console.log('✅ Conectado a MongoDB')).catch(err => console.error('❌ Error:', err));
+// --- Conexión a MongoDB (CON CÓDIGO DE DIAGNÓSTICO) ---
+const dbUri = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/menu-restaurante-db';
+
+// LÍNEA DE DIAGNÓSTICO: Imprimimos la URI para verla en los logs de Render
+console.log("Intentando conectar a MongoDB con la URI:", dbUri);
+
+// Conexión con opciones para aumentar el tiempo de espera
+mongoose.connect(dbUri, {
+    serverSelectionTimeoutMS: 30000 // Aumentamos el timeout a 30 segundos
+}).then(() => console.log('✅ Conectado a MongoDB')).catch(err => console.error('❌ Error de conexión a MongoDB:', err));
+
 
 // --- Importar Modelos ---
 const Plato = require('./models/Plato');
@@ -67,9 +75,8 @@ app.post('/api/register', async (req, res) => {
         });
         await nuevoUsuario.save();
 
-        // Enviar el correo de verificación usando Resend
         await resend.emails.send({
-            from: 'Menú Digital <onboarding@resend.dev>', // Resend usa este 'from' por defecto
+            from: 'Menú Digital <onboarding@resend.dev>',
             to: email,
             subject: 'Tu Código de Verificación',
             html: `<div style="font-family: Arial, sans-serif; text-align: center; padding: 20px;"><h2>¡Bienvenido a Menú Digital!</h2><p>Gracias por registrarte. Tu código de verificación es:</p><p style="font-size: 24px; font-weight: bold; letter-spacing: 5px; background-color: #f0f0f0; padding: 10px; border-radius: 8px;">${verificationCode}</p><p>Este código expirará en 15 minutos.</p></div>`
@@ -146,6 +153,7 @@ app.get('/api/menus-dia/restaurante/:restauranteId', async (req, res) => { try {
 app.get('/api/menus-dia/:id', async (req, res) => { try { const item = await MenuDia.findById(req.params.id); res.json(item); } catch (e) { res.status(500).json({ message: e.message }); } });
 app.put('/api/menus-dia/:id', async (req, res) => { try { const item = await MenuDia.findByIdAndUpdate(req.params.id, req.body, { new: true }); res.json(item); } catch (e) { res.status(400).json({ message: e.message }); } });
 app.delete('/api/menus-dia/:id', async (req, res) => { try { await MenuDia.findByIdAndDelete(req.params.id); res.status(204).send(); } catch (e) { res.status(500).json({ message: e.message }); } });
+
 
 // ========================================================
 // === RUTAS PÚBLICAS Y PARA SERVIR ARCHIVOS HTML =========
