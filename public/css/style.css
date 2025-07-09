@@ -150,8 +150,6 @@ input:checked + .slider:before { transform: translateX(26px); }
 
 
 /* --- PÁGINA DEL CLIENTE (index.html) --- */
-/* Esta es la nueva sección mejorada */
-
 .public-menu-header h1 {
     font-size: 2.5em;
     text-align: center;
@@ -174,7 +172,6 @@ input:checked + .slider:before { transform: translateX(26px); }
     margin-bottom: 25px;
 }
 
-/* LA NUEVA TARJETA DE MENÚ (Reemplaza a tu .menu-item) */
 .menu-card {
     background-color: var(--color-superficie);
     border-radius: var(--radio-borde);
@@ -185,16 +182,14 @@ input:checked + .slider:before { transform: translateX(26px); }
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    min-height: 230px; /* Le damos una altura mínima para consistencia */
+    min-height: 230px; 
 }
 
-/* Efecto al pasar el mouse sobre la tarjeta */
 .menu-card:hover {
     transform: translateY(-5px);
     box-shadow: 0 12px 28px rgba(0,0,0,0.1);
 }
 
-/* Nombre del plato dentro de la tarjeta */
 .menu-card h3 {
     font-size: 1.5em;
     color: var(--color-azul-oscuro);
@@ -202,15 +197,13 @@ input:checked + .slider:before { transform: translateX(26px); }
     margin-bottom: 10px;
 }
 
-/* Descripción o acompañamientos del plato */
 .menu-card .description {
     color: var(--color-texto-secundario);
     font-size: 1em;
     line-height: 1.5;
-    flex-grow: 1; /* Esto hace que la descripción ocupe el espacio flexible */
+    flex-grow: 1; 
 }
 
-/* Contenedor para el precio y el botón */
 .menu-card .card-footer {
     display: flex;
     justify-content: space-between;
@@ -218,14 +211,12 @@ input:checked + .slider:before { transform: translateX(26px); }
     margin-top: 20px;
 }
 
-/* Precio del plato */
 .menu-card .price {
     font-size: 1.7em;
     font-weight: 700;
     color: var(--color-azul-oscuro);
 }
 
-/* El nuevo botón de "Añadir" */
 .menu-card .add-btn {
     background-color: var(--color-verde-lima);
     color: var(--color-azul-oscuro);
@@ -252,7 +243,7 @@ input:checked + .slider:before { transform: translateX(26px); }
     border-radius: var(--radio-borde);
     box-shadow: var(--sombra-suave);
     position: sticky;
-    top: 24px; /* Un poco más de espacio arriba */
+    top: 24px;
 }
 
 #cart-section h2 {
@@ -294,10 +285,31 @@ input:checked + .slider:before { transform: translateX(26px); }
     padding: 5px;
 }
 
-
 /* --- DISEÑO RESPONSIVO --- */
 @media (min-width: 1024px) {
     .public-menu-grid {
         grid-template-columns: 2fr 1fr;
     }
+}
+
+/* --- ESTILOS PARA EL FORMULARIO DEL PEDIDO (AÑADIDO) --- */
+.customer-info {
+    display: flex;
+    flex-direction: column; 
+    gap: 15px; 
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.customer-info .form-group {
+    display: flex;
+    flex-direction: column; 
+    gap: 5px; 
+}
+
+.customer-info input[type="text"],
+.customer-info input[type="tel"],
+.customer-info textarea {
+    width: 100%;
+    box-sizing: border-box; 
 }

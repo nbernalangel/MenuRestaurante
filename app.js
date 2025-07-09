@@ -3,28 +3,21 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const path = require('path');
 const bcrypt = require('bcrypt');
+// No necesitamos 'resend' ni 'dotenv' para esta prueba, pero los dejamos por si los usamos después
 const { Resend } = require('resend'); 
 require('dotenv').config(); 
 
 const app = express();
-const port = process.env.PORT || 3000;
+const port = 3000;
 
 // --- Middlewares ---
 app.use(cors());
 app.use(express.json());
 app.use(express.static('public'));
 
-// --- Conexión a MongoDB (CON CÓDIGO DE DIAGNÓSTICO) ---
-const dbUri = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/menu-restaurante-db';
-
-// LÍNEA DE DIAGNÓSTICO: Imprimimos la URI para verla en los logs de Render
-console.log("Intentando conectar a MongoDB con la URI:", dbUri);
-
-// Conexión con opciones para aumentar el tiempo de espera
-mongoose.connect(dbUri, {
-    serverSelectionTimeoutMS: 30000 // Aumentamos el timeout a 30 segundos
-}).then(() => console.log('✅ Conectado a MongoDB')).catch(err => console.error('❌ Error de conexión a MongoDB:', err));
-
+// --- Conexión a MongoDB (Forzada a Local) ---
+const dbUri = 'mongodb://127.0.0.1:27017/menu-restaurante-db';
+mongoose.connect(dbUri).then(() => console.log('✅ Conectado a MongoDB Local')).catch(err => console.error('❌ Error de conexión a MongoDB:', err));
 
 // --- Importar Modelos ---
 const Plato = require('./models/Plato');
@@ -34,14 +27,16 @@ const MenuDia = require('./models/MenuDia');
 const Restaurante = require('./models/Restaurante');
 const Usuario = require('./models/Usuario');
 
-// --- Configuración de Resend ---
-const resend = new Resend(process.env.RESEND_API_KEY);
+// No necesitamos la configuración de Resend para esta prueba local
+// const resend = new Resend(process.env.RESEND_API_KEY);
 
 
 // ========================================================
-// === RUTAS DE REGISTRO Y VERIFICACIÓN ===================
+// === RUTAS DE REGISTRO Y VERIFICACIÓN (MODO DESARROLLO FORZADO) =========
 // ========================================================
 app.post('/api/register', async (req, res) => {
+    console.log("✅ Ejecutando registro en MODO DESARROLLO FORZADO.");
+    
     try {
         const { nombreRestaurante, email, password } = req.body;
 
@@ -62,27 +57,16 @@ app.post('/api/register', async (req, res) => {
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
         
-        const verificationCode = Math.floor(100000 + Math.random() * 900000).toString();
-        const verificationCodeExpires = new Date(Date.now() + 15 * 60 * 1000); 
-
         const nuevoUsuario = new Usuario({
             email,
             password: hashedPassword,
             rol: 'admin_restaurante',
             restaurante: nuevoRestaurante._id,
-            verificationCode,
-            verificationCodeExpires
+            isVerified: true, // FORZAMOS LA VERIFICACIÓN A 'TRUE'
         });
         await nuevoUsuario.save();
 
-        await resend.emails.send({
-            from: 'Menú Digital <onboarding@resend.dev>',
-            to: email,
-            subject: 'Tu Código de Verificación',
-            html: `<div style="font-family: Arial, sans-serif; text-align: center; padding: 20px;"><h2>¡Bienvenido a Menú Digital!</h2><p>Gracias por registrarte. Tu código de verificación es:</p><p style="font-size: 24px; font-weight: bold; letter-spacing: 5px; background-color: #f0f0f0; padding: 10px; border-radius: 8px;">${verificationCode}</p><p>Este código expirará en 15 minutos.</p></div>`
-        });
-
-        res.status(201).json({ message: '¡Registro exitoso! Revisa tu correo para obtener el código de verificación.' });
+        res.status(201).json({ message: '¡Usuario registrado localmente con éxito! Ya puedes iniciar sesión.' });
 
     } catch (e) {
         console.error("Error en /api/register:", e);
@@ -90,36 +74,39 @@ app.post('/api/register', async (req, res) => {
     }
 });
 
+// Esta ruta no se usará en modo local, pero la dejamos
 app.post('/api/verify', async (req, res) => {
-    try {
-        const { email, verificationCode } = req.body;
-        const usuario = await Usuario.findOne({ email });
-        if (!usuario) { return res.status(404).json({ message: 'Usuario no encontrado.' }); }
-        if (usuario.isVerified) { return res.status(400).json({ message: 'Esta cuenta ya ha sido verificada.' }); }
-        if (usuario.verificationCode !== verificationCode || usuario.verificationCodeExpires < new Date()) {
-            return res.status(400).json({ message: 'Código de verificación inválido o expirado.' });
-        }
-        usuario.isVerified = true;
-        usuario.verificationCode = undefined;
-        usuario.verificationCodeExpires = undefined;
-        await usuario.save();
-        res.status(200).json({ message: '¡Cuenta verificada con éxito! Ya puedes iniciar sesión.' });
-    } catch (e) {
-        console.error("Error en /api/verify:", e);
-        res.status(500).json({ message: 'Ocurrió un error en el servidor.' });
-    }
+    res.status(400).json({ message: 'La verificación no es necesaria en modo de desarrollo.' });
 });
 
 
 // ========================================================
 // === RUTAS DEL SUPER-ADMIN ==============================
 // ========================================================
-app.post('/api/restaurantes', async (req, res) => { try { const item = new Restaurante(req.body); await item.save(); res.status(201).json(item); } catch (e) { res.status(400).json({ message: e.message }); } });
+
+// RUTA PARA CREAR RESTAURANTES (CON DIAGNÓSTICO)
+app.post('/api/restaurantes', async (req, res) => { 
+    try { 
+        console.log("✅ Petición recibida para crear restaurante con los datos:", req.body); // <-- LÍNEA DE DIAGNÓSTICO
+        
+        const item = new Restaurante(req.body); 
+        await item.save(); 
+        
+        console.log("✅ Restaurante guardado con éxito en la base de datos."); // <-- MENSAJE DE ÉXITO
+        
+        res.status(201).json(item); 
+
+    } catch (e) { 
+        console.error("❌ ERROR al crear restaurante:", e.message); // <-- MEJORA DEL LOG DE ERROR
+        res.status(400).json({ message: e.message }); 
+    } 
+});
+
 app.get('/api/restaurantes', async (req, res) => { try { const items = await Restaurante.find(); res.json(items); } catch (e) { res.status(500).json({ message: e.message }); } });
 app.get('/api/restaurantes/:id', async (req, res) => { try { const item = await Restaurante.findById(req.params.id); res.json(item); } catch (e) { res.status(500).json({ message: e.message }); } });
 app.put('/api/restaurantes/:id', async (req, res) => { try { const item = await Restaurante.findByIdAndUpdate(req.params.id, req.body, { new: true }); res.json(item); } catch (e) { res.status(400).json({ message: e.message }); } });
 
-app.post('/api/usuarios', async (req, res) => { try { const { email, password, rol, restaurante } = req.body; const salt = await bcrypt.genSalt(10); const hashedPassword = await bcrypt.hash(password, salt); const item = new Usuario({ email, password: hashedPassword, rol, restaurante }); await item.save(); res.status(201).json(item); } catch (e) { res.status(400).json({ message: e.message }); }});
+app.post('/api/usuarios', async (req, res) => { try { const { email, password, rol, restaurante } = req.body; const salt = await bcrypt.genSalt(10); const hashedPassword = await bcrypt.hash(password, salt); const item = new Usuario({ email, password: hashedPassword, rol, restaurante, isVerified: true }); await item.save(); res.status(201).json(item); } catch (e) { res.status(400).json({ message: e.message }); }});
 app.get('/api/usuarios', async (req, res) => { try { const items = await Usuario.find().populate('restaurante', 'nombre'); res.json(items); } catch (e) { res.status(500).json({ message: e.message }); } });
 
 app.post('/api/login', async (req, res) => { try { const { email, password } = req.body; const usuario = await Usuario.findOne({ email }); if (!usuario) { return res.status(401).json({ message: 'Credenciales incorrectas' }); } if(!usuario.isVerified) { return res.status(401).json({ message: 'Tu cuenta no ha sido verificada. Por favor, revisa tu correo.'}); } const esValida = await bcrypt.compare(password, usuario.password); if (!esValida) { return res.status(401).json({ message: 'Credenciales incorrectas' }); } let nombreRestaurante = null; if(usuario.restaurante) { const rest = await Restaurante.findById(usuario.restaurante); nombreRestaurante = rest ? rest.nombre : null; } res.json({ userId: usuario._id, email: usuario.email, rol: usuario.rol, restauranteId: usuario.restaurante, nombreRestaurante }); } catch (e) { res.status(500).json({ message: 'Error interno del servidor' }); }});

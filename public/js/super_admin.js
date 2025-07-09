@@ -45,7 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 row.innerHTML = `
                     <td>${r.nombre}</td>
                     <td>${r.slug}</td>
-                    <td>${r.telefono}</td>
+                    <td>${r.telefono || ''}</td>
                     <td><button class="btn qr-btn" data-slug="${r.slug}" data-nombre="${r.nombre}">Generar QR</button></td>
                 `;
                 const option = document.createElement('option');
@@ -75,7 +75,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             qrLink.href = url;
             qrLink.textContent = `Enlace para: ${nombre}`;
-            downloadQrBtn.dataset.filename = `qr-${slug}.png`; // Guardar nombre de archivo
+            downloadQrBtn.dataset.filename = `qr-${slug}.png`;
             qrcodeContainer.style.display = 'block';
             qrcodeContainer.scrollIntoView({ behavior: 'smooth' });
         }
@@ -141,5 +141,10 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Carga Inicial ---
     loadRestaurantes();
     loadUsers();
-    asignarRestauranteContainer.style.display = 'block';
+    // Aseguramos que el contenedor de restaurante se muestre si el rol por defecto lo requiere
+    if (usuarioRolSelect.value === 'admin_restaurante') {
+        asignarRestauranteContainer.style.display = 'block';
+    } else {
+        asignarRestauranteContainer.style.display = 'none';
+    }
 });

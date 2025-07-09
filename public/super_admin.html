@@ -3,69 +3,82 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Super Administrador</title>
+    <title>Panel de Super Admin</title>
     <link rel="stylesheet" href="css/style.css">
-    <script src="https://cdn.jsdelivr.net/npm/easyqrcodejs@4.6.0/dist/easy.qrcode.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
 </head>
 <body>
     <div class="container">
-        <h1>Panel de Super Administrador</h1>
+        <h1>Panel de Super Admin</h1>
 
-        <section>
+        <div class="card">
             <h2>Gestionar Restaurantes</h2>
             <form id="restaurante-form">
-                <label for="restaurante-nombre">Nombre del Restaurante</label>
-                <input type="text" id="restaurante-nombre" required>
-                <label for="restaurante-slug">Slug para URL (ej: la-trattoria-feliz)</label>
-                <input type="text" id="restaurante-slug" required>
-                <label for="restaurante-telefono">Teléfono de Contacto</label>
-                <input type="text" id="restaurante-telefono">
+                <input type="text" id="restaurante-nombre" placeholder="Nombre del Restaurante" required>
+                <input type="text" id="restaurante-slug" placeholder="Slug para URL (ej: la-trattoria-feliz)" required>
+                <input type="text" id="restaurante-telefono" placeholder="Teléfono de Contacto">
                 <button type="submit" class="btn btn-primary">Guardar Restaurante</button>
             </form>
             <h3>Restaurantes Existentes</h3>
-            <table id="restaurantes-table">
-                <thead>
-                    <tr><th>Nombre</th><th>Slug</th><th>Teléfono</th><th>Acciones</th></tr>
-                </thead>
-                <tbody></tbody>
-            </table>
-            
-            <div id="qrcode-container" style="margin-top: 20px; text-align: center; display: none;">
-                <h3>Código QR para el Menú</h3>
-                <div id="qrcode"></div>
-                <p><a id="qr-link" href="#" target="_blank"></a></p>
-                <button id="download-qr-btn" class="btn" style="background-color: var(--success-color); margin-top: 15px;">Descargar QR</button>
+            <div class="table-responsive">
+                <table id="restaurantes-table">
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Slug</th>
+                            <th>Teléfono</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
             </div>
-        </section>
-        
-        <hr>
+             <div id="qrcode-container" style="display: none; margin-top: 20px; text-align: center;">
+                <div id="qrcode" style="display: inline-block; padding: 10px; border: 1px solid #ccc;"></div>
+                <p><a id="qr-link" href="#" target="_blank"></a></p>
+                <button id="download-qr-btn" class="btn">Descargar QR</button>
+            </div>
+        </div>
 
-        <section>
-             <h2>Gestionar Usuarios</h2>
+        <div class="card">
+            <h2>Gestionar Usuarios</h2>
             <form id="usuario-form">
-                <label for="usuario-email">Email del Usuario</label>
-                <input type="email" id="usuario-email" required>
-                <label for="usuario-password">Contraseña</label>
-                <input type="password" id="usuario-password" required>
-                <label for="usuario-rol">Rol</label>
-                <select id="usuario-rol" required style="width: 100%; padding: 12px; border: 1px solid #ced4da; border-radius: 8px; font-size: 16px;">
-                    <option value="admin_restaurante">Admin de Restaurante</option>
-                    <option value="superadmin">Super Admin</option>
-                </select>
                 <div id="asignar-restaurante-container">
                     <label for="usuario-restaurante">Asignar a Restaurante</label>
-                    <select id="usuario-restaurante" style="width: 100%; padding: 12px; border: 1px solid #ced4da; border-radius: 8px; font-size: 16px;"></select>
+                    <select id="usuario-restaurante" required></select>
+                </div>
+                <div>
+                    <label for="usuario-email">Email del Usuario</label>
+                    <input type="email" id="usuario-email" required>
+                </div>
+                <div>
+                    <label for="usuario-password">Contraseña</label>
+                    <input type="password" id="usuario-password" required>
+                </div>
+                <div>
+                    <label for="usuario-rol">Rol</label>
+                    <select id="usuario-rol" required>
+                        <option value="admin_restaurante">Admin de Restaurante</option>
+                        <option value="superadmin">Super Admin</option>
+                    </select>
                 </div>
                 <button type="submit" class="btn btn-primary">Crear Usuario</button>
             </form>
             <h3>Usuarios Existentes</h3>
-            <table id="usuarios-table">
-                <thead><tr><th>Email</th><th>Rol</th><th>Restaurante Asignado</th></tr></thead>
-                <tbody></tbody>
-            </table>
-        </section>
+            <div class="table-responsive">
+                <table id="usuarios-table">
+                    <thead>
+                        <tr>
+                            <th>Email</th>
+                            <th>Rol</th>
+                            <th>Restaurante Asignado</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
     </div>
-
-    <script src="js/super_admin.js?v=22"></script>
+    <script src="js/super_admin.js"></script>
 </body>
 </html>

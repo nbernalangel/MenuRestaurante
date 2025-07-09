@@ -36,23 +36,33 @@
                 <div class="cart-summary">
                     <strong>Total: $<span id="cart-total-price">0.00</span></strong>
                 </div>
-                <div class="customer-info">
-                    <label for="nombre-cliente">Tu Nombre</label>
-                    <input type="text" id="nombre-cliente" placeholder="Nombre (requerido)">
-                    
-                    <label for="telefono-cliente">Tu Teléfono</label>
-                    <input type="tel" id="telefono-cliente" placeholder="Teléfono de contacto">
 
-                    <label for="direccion-cliente">Dirección</label>
-                    <input type="text" id="direccion-cliente" placeholder="Dirección para domicilio (opcional)">
+                <div class="customer-info">
+                    <div class="form-group">
+                        <label for="nombre-cliente">Tu Nombre</label>
+                        <input type="text" id="nombre-cliente" placeholder="Nombre (requerido)">
+                    </div>
                     
-                    <label for="notas-cliente">Notas Adicionales</label>
-                    <textarea id="notas-cliente" placeholder="Alergias, sin cebolla, etc." rows="2"></textarea>
+                    <div class="form-group">
+                        <label for="telefono-cliente">Tu Teléfono</label>
+                        <input type="tel" id="telefono-cliente" placeholder="Teléfono de contacto">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="direccion-cliente">Dirección</label>
+                        <input type="text" id="direccion-cliente" placeholder="Dirección para domicilio (opcional)">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="notas-cliente">Notas Adicionales</label>
+                        <textarea id="notas-cliente" placeholder="Alergias, sin cebolla, etc." rows="2"></textarea>
+                    </div>
                 </div>
-                <button id="checkout-btn" class="btn btn-primary">Pedir por WhatsApp</button>
+                
+                <button id="checkout-btn" class="btn btn-primary" style="width: 100%;">Pedir por WhatsApp</button>
             </aside>
         </div>
     </div>
-    <script src="/js/script.js?v=34"></script>
+    <script src="/js/script.js"></script>
 </body>
 </html>
